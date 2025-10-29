@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Voor Kiki</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    :root {
+      --bg1: #fff7fb;
+      --bg2: #f0f4ff;
+      --ink: #222;
+      --muted: #6b7280;
+      --accent: #ef709b;
+      --card: #ffffffcc;
+      --radius: 20px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+      color: var(--ink);
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .wrap {
+      width: min(780px, 100%);
+      background: var(--card);
+      backdrop-filter: blur(6px);
+      border: 1px solid #e5e7eb;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px #00000014;
+      overflow: hidden;
+    }
+    header {
+      padding: 28px 28px 8px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: clamp(22px, 4vw, 32px);
+      letter-spacing: 0.2px;
+    }
+    header p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .letter {
+      padding: 0 28px 24px;
+      line-height: 1.7;
+      font-size: clamp(16px, 2.3vw, 18px);
+      white-space: pre-wrap;
+    }
+    .reveal {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 24px 28px;
+      border-top: 1px dashed #e5e7eb;
+      background: #ffffffaa;
+    }
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 14px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      color: #222;
+      box-shadow: 0 6px 18px #ef709b44;
+    }
+    button:focus { outline: 2px solid #ef709b55; outline-offset: 3px; }
+
+    .content { opacity: 0; transform: translateY(6px); transition: opacity .6s ease, transform .6s ease; }
+    .content.show { opacity: 1; transform: none; }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 12px 0 0;
+    }
+
+    /* Subtiele hartjes-animatie */
+    .hearts { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+    .heart { position: absolute; width: 10px; height: 10px; transform: rotate(45deg); opacity: .18; }
+    .heart::before, .heart::after { content: ""; position: absolute; width: 10px; height: 10px; background: currentColor; border-radius: 50%; }
+    .heart::before { top: -5px; left: 0; }
+    .heart::after { left: -5px; top: 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .heart { display: none; }
+      .content, .content.show { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts" aria-hidden="true"></div>
+  <main class="wrap" role="main">
+    <header>
+      <h1>Allerallerliefste Kiki</h1>
+      <p>Een kleine, eerlijke brief — alleen voor jou.</p>
+    </header>
+
+    <section class="letter">
+      <div id="content" class="content" aria-live="polite">
+Allerallerliefste Kiki Dingewolfs,
+
+Ik dacht dat ik alles al gezegd had, maar vannacht spookte je toch weer even extra door mijn hoofd. En dus zit ik hier nu, dit bericht te typen — gewoon omdat ik het belangrijk vind dat je weet wat je voor mij betekent.
+
+Ik vind het zó fijn om met jou te zijn. Je brengt warmte, rust en iets bijzonders wat moeilijk te omschrijven is.
+
+De situatie is niet eenvoudig, dat weten we allebei. Toch geniet ik intens van wat we samen hebben. Misschien hebben we ‘niets’, maar tegelijk voelt het als alles. We zijn geen ‘wij’ in woorden of verstand, maar wél in gevoel.
+
+Ik baal enorm als ik je een onaangenaam gevoel geef, want dat is nooit mijn bedoeling. Integendeel — ik wil je juist betrekken in mijn leven en je laten voelen hoe belangrijk je voor me bent. Dat jij er bent, maakt me oprecht gelukkig.
+
+Ik weet in wat voor complexe situatie we zitten, maar ik voel ook dat er iets echts tussen ons is. Iets dat niet vanzelfsprekend is. Misschien komen sommige lastige momenten juist daaruit voort — omdat het niet zwart-wit is, maar wél oprecht.
+
+Ik weet dat het voor jou ook moeilijk is. Je hart is nog bezet, en dat is iets wat ik begrijp en respecteer. We verbieden elkaar niets, maar ergens ontstaan toch verwachtingen. En ik waardeer het oprecht hoe eerlijk je daarover bent.
+
+Je verdient het mooiste, Kiek. Wat er ook gebeurt — met of zonder mij — ik gun je alles. Onze oprechte momenten betekenen veel voor me, en ik wil ze blijven koesteren.
+
+Met heel veel gevoel,
+xx
+      </div>
+    </section>
+
+    <div class="reveal">
+      <button id="open">Klik om te openen</button>
+      <button id="copy">Kopieer link</button>
+    </div>
+    <footer>💗 Privé: niet vindbaar in zoekmachines</footer>
+  </main>
+
+  <script>
+    // Onthul de brief langzaam
+    document.getElementById('open').addEventListener('click', () => {
+      document.getElementById('content').classList.add('show');
+    });
+
+    // Subtiele vallende hartjes
+    const colors = ['#ef709b', '#f59e0b', '#8b5cf6', '#10b981'];
+    const field = document.querySelector('.hearts');
+    function spawnHeart() {
+      const h = document.createElement('div');
+      h.className = 'heart';
+      h.style.color = colors[Math.floor(Math.random()*colors.length)];
+      h.style.left = Math.random()*100 + 'vw';
+      h.style.top = '-12px';
+      const duration = 5000 + Math.random()*4000;
+      const drift = (Math.random()*40-20);
+      const start = performance.now();
+      function frame(t) {
+        const p = (t - start) / duration;
+        if (p >= 1) { h.remove(); return; }
+        h.style.transform = `translate(${drift*p}vw, ${p*110}vh) rotate(45deg)`;
+        h.style.opacity = 0.22 - p*0.22;
+        requestAnimationFrame(frame);
+      }
+      field.appendChild(h);
+      requestAnimationFrame(frame);
+    }
+    let heartTimer = setInterval(spawnHeart, 800);
+    matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', e => {
+      if (e.matches) { clearInterval(heartTimer); document.querySelectorAll('.heart').forEach(h=>h.remove()); }
+    });
+
+    // Veilige link kopiëren
+    document.getElementById('copy').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(location.href);
+        const btn = document.getElementById('copy');
+        const old = btn.textContent;
+        btn.textContent = 'Gekopieerd!';
+        setTimeout(()=> btn.textContent = old, 1500);
+      } catch(e) {
+        alert('Kopiëren mislukt, kopieer de URL uit de adresbalk.');
+      }
+    });
+  </script>
+</body>
+</html>
