@@ -2,9 +2,18 @@
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Voor Kiki</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fff7fb" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="format-detection" content="telephone=no" />
   <meta name="robots" content="noindex, nofollow" />
+  <title>Voor Kiki</title>
+
+  <!-- PWA-ondersteuning -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ctext y=".9em" font-size="80"%3E%F0%9F%92%97%3C/text%3E%3C/svg%3E' />
+
   <style>
     :root {
       --bg1: #fff7fb;
@@ -14,9 +23,12 @@
       --accent: #ef709b;
       --card: #ffffffcc;
       --radius: 20px;
+      --safe-t: env(safe-area-inset-top, 0px);
+      --safe-b: env(safe-area-inset-bottom, 0px);
     }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
+
+    html, body { height: 100%; -webkit-text-size-adjust: 100%; }
+
     body {
       margin: 0;
       font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
@@ -24,10 +36,12 @@
       background: linear-gradient(135deg, var(--bg1), var(--bg2));
       display: grid;
       place-items: center;
-      padding: 24px;
+      padding: calc(16px + var(--safe-t)) 16px calc(24px + var(--safe-b));
     }
+
     .wrap {
       width: min(780px, 100%);
+      margin-inline: auto;
       background: var(--card);
       backdrop-filter: blur(6px);
       border: 1px solid #e5e7eb;
@@ -35,6 +49,7 @@
       box-shadow: 0 10px 30px #00000014;
       overflow: hidden;
     }
+
     header {
       padding: 28px 28px 8px;
     }
@@ -48,31 +63,40 @@
       color: var(--muted);
       font-size: 14px;
     }
+
     .letter {
       padding: 0 28px 24px;
       line-height: 1.7;
       font-size: clamp(16px, 2.3vw, 18px);
       white-space: pre-wrap;
     }
+
     .reveal {
       display: flex;
       gap: 12px;
       align-items: center;
       justify-content: center;
-      padding: 18px 24px 28px;
+      padding: 16px 16px calc(18px + var(--safe-b));
       border-top: 1px dashed #e5e7eb;
       background: #ffffffaa;
+      position: sticky;
+      bottom: 0;
+      backdrop-filter: blur(6px);
     }
+
     button {
       appearance: none;
       border: 0;
       border-radius: 999px;
-      padding: 12px 18px;
-      font-size: 14px;
+      padding: 14px 18px;
+      font-size: 16px; /* 16+px voorkomt zoom op iOS */
       cursor: pointer;
       background: linear-gradient(135deg, #ff9a9e, #fad0c4);
       color: #222;
       box-shadow: 0 6px 18px #ef709b44;
+      min-height: 44px;
+      min-width: 44px;
+      touch-action: manipulation;
     }
     button:focus { outline: 2px solid #ef709b55; outline-offset: 3px; }
 
@@ -86,7 +110,6 @@
       padding: 12px 0 0;
     }
 
-    /* Subtiele hartjes-animatie */
     .hearts { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
     .heart { position: absolute; width: 10px; height: 10px; transform: rotate(45deg); opacity: .18; }
     .heart::before, .heart::after { content: ""; position: absolute; width: 10px; height: 10px; background: currentColor; border-radius: 50%; }
@@ -97,10 +120,64 @@
       .heart { display: none; }
       .content, .content.show { transition: none; }
     }
+
+    /* Extra mobielvriendelijk */
+    @media (max-width: 520px) {
+      header { padding: 22px 20px 6px; }
+      .letter { padding: 0 20px 18px; }
+      .reveal { flex-direction: column; gap: 10px; }
+      button { width: 100%; }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root { --bg1: #111827; --bg2: #0b1220; --ink: #f3f4f6; --muted: #9ca3af; --card: #111827cc; }
+      body { background: linear-gradient(135deg, var(--bg1), var(--bg2)); }
+      .wrap { border-color: #374151; box-shadow: 0 10px 30px #00000066; }
+      .reveal { border-top-color: #374151; background: #0b122099; }
+    }
+
+    /* Intro overlay (tap-to-open) */
+    .intro {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      z-index: 20;
+      padding: 24px;
+      text-align: center;
+    }
+    .intro .card {
+      width: min(640px, 92vw);
+      background: var(--card);
+      border: 1px solid #e5e7eb;
+      border-radius: 22px;
+      box-shadow: 0 12px 30px #00000022;
+      padding: 26px;
+    }
+    .intro h2 { margin: 0 0 6px; font-size: clamp(20px, 5vw, 28px); }
+    .intro p { margin: 0 0 16px; color: var(--muted); font-size: 15px; }
+
+    .a2hs { display: none; }
+    .a2hs.show { display: inline-flex; }
   </style>
 </head>
+
 <body>
+  <!-- Intro overlay -->
+  <div id="intro" class="intro">
+    <div class="card" role="dialog" aria-modal="true">
+      <h2>Voor Kiki 💌</h2>
+      <p>Tik om te openen. Tip: je kunt dit ook op je beginscherm zetten als appje.</p>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:8px">
+        <button id="intro-open">Openen</button>
+        <button id="a2hs-intro" class="a2hs">Op beginscherm</button>
+      </div>
+    </div>
+  </div>
+
   <div class="hearts" aria-hidden="true"></div>
+
   <main class="wrap" role="main">
     <header>
       <h1>Allerallerliefste Kiki</h1>
@@ -133,23 +210,55 @@ xx
     <div class="reveal">
       <button id="open">Klik om te openen</button>
       <button id="copy">Kopieer link</button>
+      <button id="a2hs" class="a2hs">Op beginscherm</button>
     </div>
+
     <footer>💗 Privé: niet vindbaar in zoekmachines</footer>
   </main>
 
   <script>
-    // Onthul de brief langzaam
-    document.getElementById('open').addEventListener('click', () => {
-      document.getElementById('content').classList.add('show');
+    // Service worker voor PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+
+    // A2HS
+    let deferredPrompt = null;
+    const a2hsBtns = [document.getElementById('a2hs'), document.getElementById('a2hs-intro')].filter(Boolean);
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      a2hsBtns.forEach(b => b.classList.add('show'));
+    });
+    a2hsBtns.forEach(btn => btn && btn.addEventListener('click', async () => {
+      if (!deferredPrompt) { alert('Gebruik de deelknop van je browser om toe te voegen aan beginscherm.'); return; }
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      a2hsBtns.forEach(b => b.classList.remove('show'));
+      if (choice && choice.outcome === 'accepted') {
+        const intro = document.getElementById('intro'); if (intro) intro.remove();
+      }
+    }));
+
+    // Intro open
+    const revealContent = () => document.getElementById('content').classList.add('show');
+    document.getElementById('intro-open').addEventListener('click', () => {
+      const intro = document.getElementById('intro'); if (intro) intro.remove();
+      revealContent();
     });
 
-    // Subtiele vallende hartjes
-    const colors = ['#ef709b', '#f59e0b', '#8b5cf6', '#10b981'];
+    // Knop "Klik om te openen"
+    const openBtn = document.getElementById('open');
+    if (openBtn) openBtn.addEventListener('click', revealContent);
+
+    // Hartjes animatie
+    const colors = ['#ef709b'];
     const field = document.querySelector('.hearts');
     function spawnHeart() {
       const h = document.createElement('div');
       h.className = 'heart';
-      h.style.color = colors[Math.floor(Math.random()*colors.length)];
+      h.style.color = colors[0];
       h.style.left = Math.random()*100 + 'vw';
       h.style.top = '-12px';
       const duration = 5000 + Math.random()*4000;
@@ -170,14 +279,14 @@ xx
       if (e.matches) { clearInterval(heartTimer); document.querySelectorAll('.heart').forEach(h=>h.remove()); }
     });
 
-    // Veilige link kopiëren
-    document.getElementById('copy').addEventListener('click', async () => {
+    // Link kopiëren
+    const copyBtn = document.getElementById('copy');
+    if (copyBtn) copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(location.href);
-        const btn = document.getElementById('copy');
-        const old = btn.textContent;
-        btn.textContent = 'Gekopieerd!';
-        setTimeout(()=> btn.textContent = old, 1500);
+        const old = copyBtn.textContent;
+        copyBtn.textContent = 'Gekopieerd!';
+        setTimeout(()=> copyBtn.textContent = old, 1500);
       } catch(e) {
         alert('Kopiëren mislukt, kopieer de URL uit de adresbalk.');
       }
