@@ -27,7 +27,7 @@
       --safe-b: env(safe-area-inset-bottom, 0px);
     }
 
-    /* BELANGRIJK: géén height:100% gebruiken op html/body op mobiel */
+    /* Geen fixed hoogte meer, maar wel nette text scaling */
     html, body { -webkit-text-size-adjust: 100%; }
 
     body {
@@ -38,9 +38,46 @@
       padding: calc(16px + var(--safe-t)) 16px calc(24px + var(--safe-b));
     }
 
+    /* Intro overlay – blokkeert scroll en centreert kaart */
+    .intro {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      min-height: 100svh; /* mobiele viewport, stabieler dan 100vh */
+      z-index: 9999;
+      padding: max(24px, calc(16px + var(--safe-t))) 16px max(24px, calc(16px + var(--safe-b)));
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      /* voorkom bewegen/scrollen onder overlay */
+      overscroll-behavior: contain;
+    }
+    /* zolang intro zichtbaar is: body mag niet scrollen */
+    .no-scroll {
+      height: 100svh;
+      overflow: hidden;
+      overscroll-behavior: none;
+    }
+
+    .intro .card {
+      width: min(640px, 92vw);
+      background: var(--card);
+      border: 1px solid #e5e7eb;
+      border-radius: 22px;
+      box-shadow: 0 12px 30px #00000022;
+      padding: 26px;
+      margin: 0;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .intro h2 { margin: 0 0 6px; font-size: clamp(20px, 5vw, 28px); }
+    .intro p { margin: 0 0 16px; color: var(--muted); font-size: 15px; }
+
+    .a2hs { display: none; }
+    .a2hs.show { display: inline-flex; }
+
     .wrap {
       width: min(780px, 100%);
-      margin: 24px auto 12px; /* extra ruimte boven → altijd naar boven kunnen scrollen */
+      margin: 24px auto 12px;
       background: var(--card);
       backdrop-filter: blur(6px);
       border: 1px solid #e5e7eb;
@@ -106,28 +143,11 @@
       .wrap { border-color: #374151; box-shadow: 0 10px 30px #00000066; }
       .reveal { border-top-color: #374151; background: #0b122099; }
     }
-
-    /* Intro overlay */
-    .intro {
-      position: fixed; inset: 0; display: grid; place-items: center;
-      background: linear-gradient(135deg, var(--bg1), var(--bg2));
-      z-index: 20; padding: 24px; text-align: center;
-    }
-    .intro .card {
-      width: min(640px, 92vw);
-      background: var(--card);
-      border: 1px solid #e5e7eb; border-radius: 22px;
-      box-shadow: 0 12px 30px #00000022; padding: 26px;
-    }
-    .intro h2 { margin: 0 0 6px; font-size: clamp(20px, 5vw, 28px); }
-    .intro p { margin: 0 0 16px; color: var(--muted); font-size: 15px; }
-
-    .a2hs { display: none; }
-    .a2hs.show { display: inline-flex; }
   </style>
 </head>
 
-<body>
+<!-- body start met no-scroll zodat je niets onder de intro ziet of kunt scrollen -->
+<body class="no-scroll">
   <!-- Intro: tik om te openen -->
   <div id="intro" class="intro">
     <div class="card" role="dialog" aria-modal="true">
@@ -150,7 +170,7 @@
 
     <section class="letter">
       <div id="content" class="content" aria-live="polite">
-Allerallerliefste Kiki Dingewolfs,
+Allerallerliefste Kiki Dingewolfs1,
 
 Ik dacht dat ik alles al gezegd had, maar vannacht spookte je toch weer even extra door mijn hoofd. En dus zit ik hier nu, dit bericht te typen — gewoon omdat ik het belangrijk vind dat je weet wat je voor mij betekent.
 
@@ -205,18 +225,20 @@ xx
       }
     }));
 
-    // Inhoud tonen + naar absolute top scrollen
+    // Inhoud tonen + naar boven scrollen + scroll weer aanzetten
     const revealContent = () => {
       const content = document.getElementById('content');
       content.classList.add('show');
-      window.scrollTo({ top: 0, behavior: 'smooth' }); // ← harde top-scroll
+      // Intro weghalen en scroll herstellen
+      const intro = document.getElementById('intro');
+      if (intro) intro.remove();
+      document.body.classList.remove('no-scroll');
+      // Naar absolute top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     // Intro "Openen"
-    document.getElementById('intro-open').addEventListener('click', () => {
-      const intro = document.getElementById('intro'); if (intro) intro.remove();
-      revealContent();
-    });
+    document.getElementById('intro-open').addEventListener('click', revealContent);
 
     // Onderste knop "Klik om te openen"
     const openBtn = document.getElementById('open');
