@@ -242,7 +242,15 @@ xx
     }));
 
     // Intro open
-    const revealContent = () => document.getElementById('content').classList.add('show');
+    const revealContent = () => {
+  const content = document.getElementById('content');
+  content.classList.add('show');
+  // Scroll naar het begin van de kaart/brief
+  const card = document.querySelector('.wrap');
+  const y = card.getBoundingClientRect().top + window.pageYOffset - 8;
+  window.scrollTo({ top: y, behavior: 'smooth' });
+};
+
     document.getElementById('intro-open').addEventListener('click', () => {
       const intro = document.getElementById('intro'); if (intro) intro.remove();
       revealContent();
@@ -294,3 +302,4 @@ xx
   </script>
 </body>
 </html>
+
