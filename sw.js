@@ -1,5 +1,5 @@
 // sw.js — superlichte offline cache
-const CACHE_NAME = 'kiki-offline-v2';
+const CACHE_NAME = 'kiki-offline-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -30,4 +30,5 @@ self.addEventListener('fetch', (e) => {
     )
   );
 });
+
 
