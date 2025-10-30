@@ -27,9 +27,9 @@
       --safe-b: env(safe-area-inset-bottom, 0px);
     }
 
-    html, body { height: 100%; -webkit-text-size-adjust: 100%; }
+    /* BELANGRIJK: géén height:100% gebruiken op html/body op mobiel */
+    html, body { -webkit-text-size-adjust: 100%; }
 
-    /* Belangrijk: NIET centreren met grid -> anders kun je niet naar boven scrollen */
     body {
       margin: 0;
       font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
@@ -40,7 +40,7 @@
 
     .wrap {
       width: min(780px, 100%);
-      margin: 12px auto; /* ruimte zodat je naar boven kunt scrollen */
+      margin: 24px auto 12px; /* extra ruimte boven → altijd naar boven kunnen scrollen */
       background: var(--card);
       backdrop-filter: blur(6px);
       border: 1px solid #e5e7eb;
@@ -205,13 +205,11 @@ xx
       }
     }));
 
-    // Inhoud tonen + naar boven scrollen
+    // Inhoud tonen + naar absolute top scrollen
     const revealContent = () => {
       const content = document.getElementById('content');
       content.classList.add('show');
-      const card = document.querySelector('.wrap');
-      const y = card.getBoundingClientRect().top + window.pageYOffset - 8;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // ← harde top-scroll
     };
 
     // Intro "Openen"
